@@ -1,0 +1,116 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+
+        int m,n;
+        Scanner sc= new Scanner(System.in);
+        System.out.print("Enter the number of rows: ");
+        m=sc.nextInt();
+        System.out.print("Enter the number of columns: ");
+        n= sc.nextInt();
+
+        char[][] grid= new char[m][n];
+
+        System.out.print("Enter the row where the adventurer is present: ");
+        int ax= sc.nextInt();
+        System.out.print("Enter the column where the adventurer is present: ");
+        int ay= sc.nextInt();
+        grid[ax-1][ay-1]='a';
+
+        System.out.print("Enter the row where the gold is present: ");
+        int gx= sc.nextInt();
+        System.out.print("Enter the column where the gold is present: ");
+        int gy= sc.nextInt();
+        grid[gx-1][gy-1]='g';
+
+        sc.nextLine();
+        System.out.print("Enter 'y' if the monster is present: ");
+        char mon= sc.nextLine().charAt(0);
+
+        if(mon=='y'||mon=='Y')
+        {
+            System.out.print("Enter the row where the monster is present: ");
+            int mx= sc.nextInt();
+            System.out.print("Enter the column where the monster is present: ");
+            int my= sc.nextInt();
+            grid[mx-1][my-1]='m';
+            sc.nextLine();
+        }
+
+        System.out.print("Enter 'y' if the trigger is present: ");
+        char trig= sc.nextLine().charAt(0);
+
+        if(trig=='y'||trig=='Y')
+        {
+            System.out.print("Enter the row where the trigger is present: ");
+            int tx= sc.nextInt();
+            System.out.print("Enter the column where the trigger is present: ");
+            int ty= sc.nextInt();
+            grid[tx-1][ty-1]='t';
+
+        }
+
+
+
+        System.out.print("Enter number of pits present: ");
+        int pits= sc.nextInt();
+
+        for(int i=0;i<pits;i++)
+        {
+            System.out.print("Enter the row of the pit number "+(i+1)+": ");
+            int px= sc.nextInt();
+            System.out.print("Enter the column of the pit number "+(i+1)+": ");
+            int py= sc.nextInt();
+
+            grid[px-1][py-1]='p';
+        }
+        Main tr= new Main();
+
+        int sp=tr.treasure(grid, ax, ay, gx, gy, mon, trig);
+        System.out.println("Shortest path for the adventure to reach gold is "+sp);
+    }
+
+    int treasure(char[][] grid,int ax, int ay,int gx,int gy, int mon, int trig)
+    {
+        boolean[][] bGrid= new boolean[grid.length][grid[0].length];
+//        if(mon!='y'&&mon!='Y')
+//        {
+            return bt(grid,bGrid, ax-1, ay-1, 0);
+//        }
+    }
+
+    int bt(char[][] grid, boolean[][] bGrid, int ax, int ay, int c)
+    {
+//        System.out.println(ax+" "+ay+" "+c+" "+grid[0].length);
+        if((ax<0||ax>=grid.length||ay<0||ay>=grid[0].length)||bGrid[ax][ay])
+            return -1;
+
+        if(grid[ax][ay]=='g')
+        {
+            return c;
+        }
+
+        if(grid[ax][ay]=='p')
+            return -1;
+
+        bGrid[ax][ay]=true;
+        int u= bt(grid, bGrid, ax, ay+1, c+1);
+        int d= bt(grid, bGrid, ax, ay-1, c+1);
+        int r= bt(grid, bGrid, ax+1, ay, c+1);
+        int l= bt(grid, bGrid, ax-1, ay, c+1);
+        bGrid[ax][ay]=false;
+
+        if(u==-1&&d==-1&&r==-1&&l==-1)
+            return -1;
+        if(l==-1)
+            l=Integer.MAX_VALUE;
+        if(r==-1)
+            r=Integer.MAX_VALUE;
+        if(d==-1)
+            d=Integer.MAX_VALUE;
+        if(u==-1)
+            u=Integer.MAX_VALUE;
+        return Math.min(u,Math.min(d,Math.min(r,l)));
+    }
+}
